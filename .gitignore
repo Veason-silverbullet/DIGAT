@@ -1,0 +1,14 @@
+/MIND-small-SAG
+/MIND-large-SAG
+/*.json
+/*.pkl
+/logs
+/models
+/best_model
+/dev
+/test
+/configs
+/results
+/prediction
+/__pycache__
+/.vscode
