@@ -6,13 +6,11 @@ This repository releases the code of paper [**DIGAT: Modeling News Recommendatio
 The experiments are conducted on MIND-small and MIND-large. Our code tries to download and extract MIND-small and MIND-large to the directories `../MIND-small` and `../MIND-large`. Since MIND is quite large, if our code cannot download it due to network issues, please manually download MIND with the script `download_MIND.sh`.
 <br/><br/>
 
-
 ## Environment Requirements
 Dependencies are needed to be installed by
 <pre><code>bash install_dependencies.sh</code></pre>
 Our experiments require python>=3.7, torch==1.12.1, and torch_scatter==2.0.9. The [torch_scatter](https://github.com/rusty1s/pytorch_scatter) package is neccessary. If the dependency installation fails, please follow [https://github.com/rusty1s/pytorch_scatter](https://github.com/rusty1s/pytorch_scatter) to install the package manually.
 <br/><br/>
-
 
 ## Experiment Running
 <hr>Training DIGAT
@@ -50,7 +48,6 @@ python main.py --graph_encoder=DIGAT --graph_depth=6
 python main.py --graph_encoder=DIGAT --graph_depth=7</code></pre>
 <br/>
 
-
 ## Experiments on MIND-small and MIND-large
 The experiment dataset can be specified by the config parameter `--dataset=[MIND-small,MIND-large] (default MIND-small)`.
 <pre><code>python main.py --dataset=MIND-small
@@ -65,7 +62,6 @@ We had benchmarked and found that the most computation overhead comes from Eq. (
 In `faster-inference` mode, the inference time on MIND-small reduces from around 600s to 400s (benchmarked on Nvidia 3090), where we observe no AUC/MRR/nDCG performance degradation (accurate to 1e-4).
 
 It is also worth noting that 1) quantization is only partially performed in Eq. (8), the other parts of DIGAT are still computed in fp32. 2) Do NOT perform quantization in training DIGAT, which will degrade the performance. 3) Concretely, the computation overhead lies within the huge broadcast-add [K3 + K1 + K2](https://github.com/Veason-silverbullet/DIGAT/blob/6cfdaffae5d749bd12156084d27c08d0ba4011a6/graphEncoders.py#L150). This broadcast-add may be optimized by tailored efficient CUDA operator in the future.
-
 
 ## TODO features (may be updated soon)
 1. Distributed training
