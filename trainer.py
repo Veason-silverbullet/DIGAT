@@ -85,7 +85,7 @@ class Trainer:
                                news_title_text, news_title_mask, news_graph, news_graph_mask) # [batch_size, 1 + negative_sample_num]
 
                 loss = (-torch.log_softmax(logits, dim=1).select(1, 0)).mean()
-                epoch_loss += float(loss) * user_title_text.size(0)
+                epoch_loss += loss.item() * user_title_text.size(0)
                 self.optimizer.zero_grad()
                 loss.backward()
                 if self.gradient_clip_norm > 0:
