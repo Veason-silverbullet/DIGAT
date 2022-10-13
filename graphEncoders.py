@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from layers import ScaledDotProductAttention
 from torch_scatter import scatter_sum, scatter_softmax
+from torch.cuda import amp
 
 
 class GraphEncoder(nn.Module):
@@ -143,14 +144,22 @@ class DIGAT(GraphEncoder):
     def compute_news_graph_embeddings(self, index, news_graph_embeddings, news_graph, user_graph_context):
         batch_size = news_graph_embeddings.size(0)
         news_graph_embeddings = self.dropout__(news_graph_embeddings)
-        h = self.news_graph_attention_W[index](news_graph_embeddings)                                                    # [batch_size, news_graph_size, news_embedding_dim]
-        K1 = self.news_graph_attention_ffn1[index](news_graph_embeddings).unsqueeze(dim=1)                               # [batch_size, 1, news_graph_size, news_embedding_dim]
-        K2 = self.news_graph_attention_ffn2[index](news_graph_embeddings).unsqueeze(dim=2)                               # [batch_size, news_graph_size, 1, news_embedding_dim]
-        K3 = self.news_graph_attention_ffn3[index](user_graph_context).view([batch_size, 1, 1, self.news_embedding_dim]) # [batch_size, 1, 1, news_embedding_dim]
-        a = self.news_graph_attention_a[index](F.relu(K3 + K1 + K2, inplace=True)).squeeze(dim=3)                        # [batch_size, news_graph_size, news_graph_size]
-        e = self.leaky_relu(a)                                                                                           # [batch_size, news_graph_size, news_graph_size]
-        alpha = self.dropout_(F.softmax(e.masked_fill(news_graph == 0, -1e9), dim=2))                                    # [batch_size, news_graph_size, news_graph_size]
-        _news_graph_embeddings = F.relu(torch.bmm(alpha, h), inplace=True) + news_graph_embeddings                       # [batch_size, news_graph_size, news_embedding_dim]
+        h = self.news_graph_attention_W[index](news_graph_embeddings)                                                            # [batch_size, news_graph_size, news_embedding_dim]
+        if self.training:
+            K1 = self.news_graph_attention_ffn1[index](news_graph_embeddings).unsqueeze(dim=1)                                   # [batch_size, 1, news_graph_size, news_embedding_dim]
+            K2 = self.news_graph_attention_ffn2[index](news_graph_embeddings).unsqueeze(dim=2)                                   # [batch_size, news_graph_size, 1, news_embedding_dim]
+            K3 = self.news_graph_attention_ffn3[index](user_graph_context).view([batch_size, 1, 1, self.news_embedding_dim])     # [batch_size, 1, 1, news_embedding_dim]
+            a = self.news_graph_attention_a[index](F.relu(K3 + K1 + K2, inplace=True)).squeeze(dim=3)                            # [batch_size, news_graph_size, news_graph_size]
+        else:
+            with amp.autocast():
+                K1 = self.news_graph_attention_ffn1[index](news_graph_embeddings).unsqueeze(dim=1)                               # [batch_size, 1, news_graph_size, news_embedding_dim]
+                K2 = self.news_graph_attention_ffn2[index](news_graph_embeddings).unsqueeze(dim=2)                               # [batch_size, news_graph_size, 1, news_embedding_dim]
+                K3 = self.news_graph_attention_ffn3[index](user_graph_context).view([batch_size, 1, 1, self.news_embedding_dim]) # [batch_size, 1, 1, news_embedding_dim]
+                a = self.news_graph_attention_a[index](F.relu(K3 + K1 + K2, inplace=True)).squeeze(dim=3)                        # [batch_size, news_graph_size, news_graph_size]
+            a = a.float()
+        e = self.leaky_relu(a)                                                                                                   # [batch_size, news_graph_size, news_graph_size]
+        alpha = self.dropout_(F.softmax(e.masked_fill(news_graph == 0, -1e9), dim=2))                                            # [batch_size, news_graph_size, news_graph_size]
+        _news_graph_embeddings = F.relu(torch.bmm(alpha, h), inplace=True) + news_graph_embeddings                               # [batch_size, news_graph_size, news_embedding_dim]
         return _news_graph_embeddings
 
     # Input
@@ -163,14 +172,22 @@ class DIGAT(GraphEncoder):
     def compute_user_graph_embeddings(self, index, user_graph_embeddings, user_graph, news_graph_context):
         batch_size = user_graph_embeddings.size(0)
         user_graph_embeddings = self.dropout__(user_graph_embeddings)
-        h = self.user_graph_attention_W[index](user_graph_embeddings)                                                    # [batch_size, user_graph_size, news_embedding_dim]
-        K1 = self.user_graph_attention_ffn1[index](user_graph_embeddings).unsqueeze(dim=1)                               # [batch_size, 1, user_graph_size, news_embedding_dim]
-        K2 = self.user_graph_attention_ffn2[index](user_graph_embeddings).unsqueeze(dim=2)                               # [batch_size, user_graph_size, 1, news_embedding_dim]
-        K3 = self.user_graph_attention_ffn3[index](news_graph_context).view([batch_size, 1, 1, self.news_embedding_dim]) # [batch_size, 1, 1, news_embedding_dim]
-        a = self.user_graph_attention_a[index](F.relu(K3 + K1 + K2, inplace=True)).squeeze(dim=3)                        # [batch_size, user_graph_size, user_graph_size]
-        e = self.leaky_relu(a)                                                                                           # [batch_size, user_graph_size, user_graph_size]
-        alpha = self.dropout_(F.softmax(e.masked_fill(user_graph == 0, -1e9), dim=2))                                    # [batch_size, user_graph_size, user_graph_size]
-        _user_graph_embeddings = F.relu(torch.bmm(alpha, h), inplace=True) + user_graph_embeddings                       # [batch_size, user_graph_size, news_embedding_dim]
+        h = self.user_graph_attention_W[index](user_graph_embeddings)                                                            # [batch_size, user_graph_size, news_embedding_dim]
+        if self.training:
+            K1 = self.user_graph_attention_ffn1[index](user_graph_embeddings).unsqueeze(dim=1)                                   # [batch_size, 1, user_graph_size, news_embedding_dim]
+            K2 = self.user_graph_attention_ffn2[index](user_graph_embeddings).unsqueeze(dim=2)                                   # [batch_size, user_graph_size, 1, news_embedding_dim]
+            K3 = self.user_graph_attention_ffn3[index](news_graph_context).view([batch_size, 1, 1, self.news_embedding_dim])     # [batch_size, 1, 1, news_embedding_dim]
+            a = self.user_graph_attention_a[index](F.relu(K3 + K1 + K2, inplace=True)).squeeze(dim=3)                            # [batch_size, user_graph_size, user_graph_size]
+        else:
+            with amp.autocast():
+                K1 = self.user_graph_attention_ffn1[index](user_graph_embeddings).unsqueeze(dim=1)                               # [batch_size, 1, user_graph_size, news_embedding_dim]
+                K2 = self.user_graph_attention_ffn2[index](user_graph_embeddings).unsqueeze(dim=2)                               # [batch_size, user_graph_size, 1, news_embedding_dim]
+                K3 = self.user_graph_attention_ffn3[index](news_graph_context).view([batch_size, 1, 1, self.news_embedding_dim]) # [batch_size, 1, 1, news_embedding_dim]
+                a = self.user_graph_attention_a[index](F.relu(K3 + K1 + K2, inplace=True)).squeeze(dim=3)                        # [batch_size, user_graph_size, user_graph_size]
+            a = a.float()
+        e = self.leaky_relu(a)                                                                                                   # [batch_size, user_graph_size, user_graph_size]
+        alpha = self.dropout_(F.softmax(e.masked_fill(user_graph == 0, -1e9), dim=2))                                            # [batch_size, user_graph_size, user_graph_size]
+        _user_graph_embeddings = F.relu(torch.bmm(alpha, h), inplace=True) + user_graph_embeddings                               # [batch_size, user_graph_size, news_embedding_dim]
         return _user_graph_embeddings
 
 
