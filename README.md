@@ -59,9 +59,15 @@ For MIND-large, please submit the model prediction file to [*MIND leaderboard*](
 <br/><br/>
 
 
+## Faster Inference
+We had benchmarked and found that the most computation overhead comes from Eq. (8) in the paper. Hence, we perform partial quantization in computing Eq. (8). For the faster inference code, please checkout to the branch `faster-inference`:
+<pre><code>git checkout faster-inference</code></pre>
+In `faster-inference` mode, the inference time on MIND-small reduces from around 600s to 400s (benchmarked on Nvidia 3090), where we observe no AUC/MRR/nDCG performance degradation (accurate to 1e-4).
+
+It is also worth noting that 1) quantization is only partially performed in Eq. (8), the other parts of DIGAT are still computed in fp32. 2) Do NOT perform quantization in training DIGAT, which will degrade the performance. 3) Concretely, the computation overhead lies within the huge broadcast-add [K3 + K1 + K2](https://github.com/Veason-silverbullet/DIGAT/blob/6cfdaffae5d749bd12156084d27c08d0ba4011a6/graphEncoders.py#L150). This broadcast-add may be optimized by tailored efficient CUDA operator in the future.
+
 ## TODO features (may be updated soon)
 1. Distributed training
-2. Faster inference
-3. DIGAT + PLM news encoder
+2. DIGAT + PLM news encoder
 
 P.S. As the majority of this work is done in CUHK, we do not have enough GPUs to train PLM news encoder on MIND-large (due to millions of user logs). We hope to experiment DIGAT with PLM news encoder in the future. For anyone interested in training DIGAT with PLM news encoder, please feel free to contact us via zmmao@se.cuhk.edu.hk, and we are happy to share the code.
