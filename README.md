@@ -55,7 +55,6 @@ python main.py --dataset=MIND-large</code></pre>
 For MIND-large, please submit the model prediction file to [*MIND leaderboard*](https://msnews.github.io/index.html#leaderboard) for performance evaluation. For example, having finished training model #1, the model prediction file is at `prediction/MIND-large/MSA-DIGAT/#1/prediction.zip`. If the prediction zip file is not found, please find the raw prediction file at `test/MIND-large/res/MSA-DIGAT/best_model_MIND-large_MSA-DIGAT_#1_MSA-DIGAT/MSA-DIGAT.txt`.
 <br/><br/>
 
-
 ## Faster Inference
 We had benchmarked and found that the most computation overhead comes from Eq. (8) in the paper. Hence, we perform partial quantization in computing Eq. (8). For the faster inference code, please checkout to the branch `faster-inference`:
 <pre><code>git checkout faster-inference</code></pre>
