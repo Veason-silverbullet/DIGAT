@@ -6,13 +6,11 @@ This repository releases the code of paper [**DIGAT: Modeling News Recommendatio
 The experiments are conducted on MIND-small and MIND-large. Our code tries to download and extract MIND-small and MIND-large to the directories `../MIND-small` and `../MIND-large`. Since MIND is quite large, if our code cannot download it due to network issues, please manually download MIND with the script `download_MIND.sh`.
 <br/><br/>
 
-
 ## Environment Requirements
 Dependencies are needed to be installed by
 <pre><code>bash install_dependencies.sh</code></pre>
-Our experiments require python>=3.7, torch==1.12.1, and torch_scatter==2.0.9. The [torch_scatter](https://github.com/rusty1s/pytorch_scatter) package is neccessary. If the dependency installation fails, please follow [https://github.com/rusty1s/pytorch_scatter](https://github.com/rusty1s/pytorch_scatter) to install the package manually.
+Our experiments require python>=3.7, torch==1.12.1, and torch_scatter==2.0.9. The [torch_scatter](https://github.com/rusty1s/pytorch_scatter) package is necessary. If the dependency installation fails, please follow [https://github.com/rusty1s/pytorch_scatter](https://github.com/rusty1s/pytorch_scatter) to install the package manually.
 <br/><br/>
-
 
 ## Experiment Running
 <hr>Training DIGAT
@@ -57,7 +55,6 @@ The experiment dataset can be specified by the config parameter `--dataset=[MIND
 python main.py --dataset=MIND-large</code></pre>
 For MIND-large, please submit the model prediction file to [*MIND leaderboard*](https://msnews.github.io/index.html#leaderboard) for performance evaluation. For example, having finished training model #1, the model prediction file is at `prediction/MIND-large/MSA-DIGAT/#1/prediction.zip`. If the prediction zip file is not found, please find the raw prediction file at `test/MIND-large/res/MSA-DIGAT/best_model_MIND-large_MSA-DIGAT_#1_MSA-DIGAT/MSA-DIGAT.txt`.
 <br/><br/>
-
 
 ## Faster Inference
 We had benchmarked and found that the most computation overhead comes from Eq. (8) in the paper. Hence, we perform partial quantization in computing Eq. (8). For the faster inference code, please checkout to the branch `faster-inference`:

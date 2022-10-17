@@ -58,9 +58,9 @@ class MultiHeadAttention(nn.Module):
         self.d_v = d_v
         self.out_dim = self.h * self.d_v
         self.attention_scalar = math.sqrt(float(self.d_k))
-        self.W_K = nn.Linear(in_features=d_model, out_features=self.h*self.d_k, bias=False)
-        self.W_Q = nn.Linear(in_features=d_model, out_features=self.h*self.d_k, bias=True)
-        self.W_V = nn.Linear(in_features=d_model, out_features=self.h*self.d_v, bias=True)
+        self.W_K = nn.Linear(d_model, self.h*self.d_k, bias=False)
+        self.W_Q = nn.Linear(d_model, self.h*self.d_k, bias=True)
+        self.W_V = nn.Linear(d_model, self.h*self.d_v, bias=True)
 
     def initialize(self):
         nn.init.zeros_(self.W_Q.bias)
@@ -91,8 +91,8 @@ class MultiHeadAttention(nn.Module):
 class Attention(nn.Module):
     def __init__(self, feature_dim: int, attention_dim: int):
         super(Attention, self).__init__()
-        self.affine1 = nn.Linear(in_features=feature_dim, out_features=attention_dim, bias=True)
-        self.affine2 = nn.Linear(in_features=attention_dim, out_features=1, bias=False)
+        self.affine1 = nn.Linear(feature_dim, attention_dim, bias=True)
+        self.affine2 = nn.Linear(attention_dim, 1, bias=False)
 
     def initialize(self):
         nn.init.xavier_uniform_(self.affine1.weight, gain=nn.init.calculate_gain('tanh'))
@@ -118,9 +118,9 @@ class Attention(nn.Module):
 class CandidateAttention(nn.Module):
     def __init__(self, feature_dim: int, query_dim: int, attention_dim: int):
         super(CandidateAttention, self).__init__()
-        self.feature_affine = nn.Linear(in_features=feature_dim, out_features=attention_dim, bias=False)
-        self.query_affine = nn.Linear(in_features=query_dim, out_features=attention_dim, bias=True)
-        self.attention_affine = nn.Linear(in_features=attention_dim, out_features=1, bias=False)
+        self.feature_affine = nn.Linear(feature_dim, attention_dim, bias=False)
+        self.query_affine = nn.Linear(query_dim, attention_dim, bias=True)
+        self.attention_affine = nn.Linear(attention_dim, 1, bias=False)
 
     def initialize(self):
         nn.init.xavier_uniform_(self.feature_affine.weight, gain=nn.init.calculate_gain('tanh'))
@@ -149,9 +149,9 @@ class CandidateAttention(nn.Module):
 class MultipleCandidateAttention(nn.Module):
     def __init__(self, feature_dim: int, query_dim: int, attention_dim: int):
         super(MultipleCandidateAttention, self).__init__()
-        self.feature_affine = nn.Linear(in_features=feature_dim, out_features=attention_dim, bias=False)
-        self.query_affine = nn.Linear(in_features=query_dim, out_features=attention_dim, bias=True)
-        self.attention_affine = nn.Linear(in_features=attention_dim, out_features=1, bias=False)
+        self.feature_affine = nn.Linear(feature_dim, attention_dim, bias=False)
+        self.query_affine = nn.Linear(query_dim, attention_dim, bias=True)
+        self.attention_affine = nn.Linear(attention_dim, 1, bias=False)
 
     def initialize(self):
         nn.init.xavier_uniform_(self.feature_affine.weight, gain=nn.init.calculate_gain('tanh'))
@@ -181,8 +181,8 @@ class MultipleCandidateAttention(nn.Module):
 class ScaledDotProductAttention(nn.Module):
     def __init__(self, feature_dim: int, query_dim: int, attention_dim: int):
         super(ScaledDotProductAttention, self).__init__()
-        self.K = nn.Linear(in_features=feature_dim, out_features=attention_dim, bias=False)
-        self.Q = nn.Linear(in_features=query_dim, out_features=attention_dim, bias=True)
+        self.K = nn.Linear(feature_dim, attention_dim, bias=False)
+        self.Q = nn.Linear(query_dim, attention_dim, bias=True)
         self.attention_scalar = math.sqrt(float(attention_dim))
 
     def initialize(self):
@@ -209,8 +209,8 @@ class ScaledDotProductAttention(nn.Module):
 class MultipleScaledDotProductAttention(nn.Module):
     def __init__(self, feature_dim: int, query_dim: int, attention_dim: int):
         super(MultipleScaledDotProductAttention, self).__init__()
-        self.K = nn.Linear(in_features=feature_dim, out_features=attention_dim, bias=True)
-        self.Q = nn.Linear(in_features=query_dim, out_features=attention_dim, bias=True)
+        self.K = nn.Linear(feature_dim, attention_dim, bias=True)
+        self.Q = nn.Linear(query_dim, attention_dim, bias=True)
         self.attention_scalar = math.sqrt(float(attention_dim))
 
     def initialize(self):
@@ -238,8 +238,8 @@ class MultipleScaledDotProductAttention(nn.Module):
 class DualScaledDotProductAttention(nn.Module):
     def __init__(self, feature_dim1: int, feature_dim2: int, attention_dim: int):
         super(DualScaledDotProductAttention, self).__init__()
-        self.f1 = nn.Linear(in_features=feature_dim1, out_features=attention_dim, bias=True)
-        self.f2 = nn.Linear(in_features=feature_dim2, out_features=attention_dim, bias=True)
+        self.f1 = nn.Linear(feature_dim1, attention_dim, bias=True)
+        self.f2 = nn.Linear(feature_dim2, attention_dim, bias=True)
         self.attention_scalar = math.sqrt(float(attention_dim))
 
     def initialize(self):
@@ -305,7 +305,7 @@ class GCNLayer(nn.Module):
         self.layer_norm = layer_norm
         if self.residual and in_dim != out_dim:
             raise Exception('To facilitate residual connection, in_dim must equal to out_dim')
-        self.W = nn.Linear(in_features=in_dim, out_features=out_dim, bias=True)
+        self.W = nn.Linear(in_dim, out_dim, bias=True)
         if self.layer_norm:
             self.layer_normalization = nn.LayerNorm(normalized_shape=[out_dim])
 
@@ -363,9 +363,9 @@ class GCN(nn.Module):
 class GatedRGCNLayer(nn.Module):
     def __init__(self, feature_dim):
         super(GatedRGCNLayer, self).__init__()
-        self.fs = nn.Linear(in_features=feature_dim, out_features=feature_dim, bias=True)
-        self.fr = nn.Linear(in_features=feature_dim, out_features=feature_dim, bias=True)
-        self.fa = nn.Linear(in_features=feature_dim*2, out_features=feature_dim, bias=True)
+        self.fs = nn.Linear(feature_dim, feature_dim, bias=True)
+        self.fr = nn.Linear(feature_dim, feature_dim, bias=True)
+        self.fa = nn.Linear(feature_dim*2, feature_dim, bias=True)
 
     def initialize(self):
         nn.init.xavier_uniform_(self.fs.weight, gain=nn.init.calculate_gain('sigmoid'))
@@ -415,9 +415,9 @@ class GatedRGCN(nn.Module):
 class GATLayer(nn.Module):
     def __init__(self, feature_dim, dropout=0.1, residual=False):
         super(GATLayer, self).__init__()
-        self.W = nn.Linear(in_features=feature_dim, out_features=feature_dim, bias=True)
-        self.Q = nn.Linear(in_features=feature_dim, out_features=feature_dim, bias=True)
-        self.K = nn.Linear(in_features=feature_dim, out_features=feature_dim, bias=True)
+        self.W = nn.Linear(feature_dim, feature_dim, bias=True)
+        self.Q = nn.Linear(feature_dim, feature_dim, bias=True)
+        self.K = nn.Linear(feature_dim, feature_dim, bias=True)
         self.attention_scalar = math.sqrt(float(feature_dim))
         self.leaky_relu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
         self.dropout = nn.Dropout(dropout, inplace=False)
@@ -472,9 +472,9 @@ class MultiheadGATLayer(nn.Module):
         super(MultiheadGATLayer, self).__init__()
         self.feature_dim = feature_dim
         self.head_num = head_num
-        self.V = nn.Linear(in_features=feature_dim, out_features=head_num*feature_dim, bias=True)
-        self.Q = nn.Linear(in_features=feature_dim, out_features=feature_dim, bias=True)
-        self.K = nn.Linear(in_features=feature_dim, out_features=feature_dim, bias=True)
+        self.V = nn.Linear(feature_dim, head_num*feature_dim, bias=True)
+        self.Q = nn.Linear(feature_dim, feature_dim, bias=True)
+        self.K = nn.Linear(feature_dim, feature_dim, bias=True)
         self.attention_scalar = math.sqrt(float(feature_dim))
         self.leaky_relu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
         self.dropout = nn.Dropout(dropout, inplace=False)

@@ -50,27 +50,27 @@ class DIGAT(GraphEncoder):
         super(DIGAT, self).__init__(config, news_embedding_dim)
         # compute_news_graph_context
         self.candidate_attention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
-        self.news_graph_W = nn.Linear(in_features=self.news_embedding_dim * 2, out_features=self.news_embedding_dim, bias=True)
+        self.news_graph_W = nn.Linear(self.news_embedding_dim * 2, self.news_embedding_dim, bias=True)
 
         # compute_user_graph_context
-        self.user_news_K = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False)
-        self.user_news_Q = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
-        self.featureAffine = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
+        self.user_news_K = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False)
+        self.user_news_Q = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
+        self.featureAffine = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
         self.userAttention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
 
         # compute_news_graph_embeddings
-        self.news_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.news_graph_attention_ffn1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.news_graph_attention_ffn2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.news_graph_attention_ffn3 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.news_graph_attention_a = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.news_graph_attention_ffn1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_ffn2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_ffn3 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.news_graph_attention_a = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
         # compute_user_graph_embeddings
-        self.user_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn3 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_a = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn3 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_a = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
 
     def initialize(self):
@@ -202,17 +202,17 @@ class wo_SA(GraphEncoder):
     def __init__(self, config: Config, news_embedding_dim: int):
         super(wo_SA, self).__init__(config, news_embedding_dim)
         # compute_user_graph_context
-        self.user_news_K = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False)
-        self.user_news_Q = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
-        self.featureAffine = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
+        self.user_news_K = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False)
+        self.user_news_Q = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
+        self.featureAffine = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
         self.userAttention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
 
         # compute_user_graph_embeddings
-        self.user_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn3 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_a = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn3 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_a = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
 
     def initialize(self):
@@ -297,20 +297,20 @@ class Seq_SA(GraphEncoder):
         super(Seq_SA, self).__init__(config, news_embedding_dim)
         # compute_news_sequence_context
         self.candidate_attention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
-        self.news_graph_W = nn.Linear(in_features=self.news_embedding_dim * 2, out_features=self.news_embedding_dim, bias=True)
+        self.news_graph_W = nn.Linear(self.news_embedding_dim * 2, self.news_embedding_dim, bias=True)
 
         # compute_user_graph_context
-        self.user_news_K = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False)
-        self.user_news_Q = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
-        self.featureAffine = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
+        self.user_news_K = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False)
+        self.user_news_Q = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
+        self.featureAffine = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
         self.userAttention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
 
         # compute_user_graph_embeddings
-        self.user_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn3 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_a = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn3 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_a = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
 
     def initialize(self):
@@ -412,23 +412,23 @@ class wo_interaction(GraphEncoder):
         super(wo_interaction, self).__init__(config, news_embedding_dim)
         # compute_news_graph_context
         self.candidate_attention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
-        self.news_graph_W = nn.Linear(in_features=self.news_embedding_dim * 2, out_features=self.news_embedding_dim, bias=True)
+        self.news_graph_W = nn.Linear(self.news_embedding_dim * 2, self.news_embedding_dim, bias=True)
 
         # compute_user_graph_context
-        self.user_news_K = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False)
-        self.user_news_Q = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
-        self.featureAffine = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
+        self.user_news_K = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False)
+        self.user_news_Q = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
+        self.featureAffine = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
         self.userAttention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
 
         # compute_news_graph_embeddings
-        self.news_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.news_graph_attention_a1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
-        self.news_graph_attention_a2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.news_graph_attention_a1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_a2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
         # compute_user_graph_embeddings
-        self.user_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_a1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_a2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_a1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_a2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
 
     def initialize(self):
@@ -553,25 +553,25 @@ class News_graph_wo_inter(GraphEncoder):
         super(News_graph_wo_inter, self).__init__(config, news_embedding_dim)
         # compute_news_graph_context
         self.candidate_attention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
-        self.news_graph_W = nn.Linear(in_features=self.news_embedding_dim * 2, out_features=self.news_embedding_dim, bias=True)
+        self.news_graph_W = nn.Linear(self.news_embedding_dim * 2, self.news_embedding_dim, bias=True)
 
         # compute_user_graph_context
-        self.user_news_K = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False)
-        self.user_news_Q = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
-        self.featureAffine = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
+        self.user_news_K = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False)
+        self.user_news_Q = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
+        self.featureAffine = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
         self.userAttention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
 
         # compute_news_graph_embeddings
-        self.news_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.news_graph_attention_a1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
-        self.news_graph_attention_a2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.news_graph_attention_a1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_a2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
         # compute_user_graph_embeddings
-        self.user_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_ffn3 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_a = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_ffn3 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_a = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
 
     def initialize(self):
@@ -700,25 +700,25 @@ class User_graph_wo_inter(GraphEncoder):
         super(User_graph_wo_inter, self).__init__(config, news_embedding_dim)
         # compute_news_graph_context
         self.candidate_attention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
-        self.news_graph_W = nn.Linear(in_features=self.news_embedding_dim * 2, out_features=self.news_embedding_dim, bias=True)
+        self.news_graph_W = nn.Linear(self.news_embedding_dim * 2, self.news_embedding_dim, bias=True)
 
         # compute_user_graph_context
-        self.user_news_K = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False)
-        self.user_news_Q = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
-        self.featureAffine = nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True)
+        self.user_news_K = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False)
+        self.user_news_Q = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
+        self.featureAffine = nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True)
         self.userAttention = ScaledDotProductAttention(self.news_embedding_dim, self.news_embedding_dim, self.news_embedding_dim)
 
         # compute_news_graph_embeddings
-        self.news_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.news_graph_attention_ffn1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.news_graph_attention_ffn2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
-        self.news_graph_attention_ffn3 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.news_graph_attention_a = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.news_graph_attention_ffn1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_ffn2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=False) for i in range(self.graph_depth)])
+        self.news_graph_attention_ffn3 = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.news_graph_attention_a = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
         # compute_user_graph_embeddings
-        self.user_graph_attention_W = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
-        self.user_graph_attention_a1 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
-        self.user_graph_attention_a2 = nn.ModuleList([nn.Linear(in_features=self.news_embedding_dim, out_features=1, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_W = nn.ModuleList([nn.Linear(self.news_embedding_dim, self.news_embedding_dim, bias=True) for i in range(self.graph_depth)])
+        self.user_graph_attention_a1 = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
+        self.user_graph_attention_a2 = nn.ModuleList([nn.Linear(self.news_embedding_dim, 1, bias=False) for i in range(self.graph_depth)])
 
 
     def initialize(self):
