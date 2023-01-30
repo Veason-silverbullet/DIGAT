@@ -15,8 +15,8 @@ Our experiments require python>=3.7, torch==1.12.1, and torch_scatter==2.0.9. Th
 ## Experiment Running
 <hr>Training DIGAT
 <pre><code>python main.py --graph_encoder=DIGAT</code></pre>
-<pre><code> # Uses two GPUs to train DIGAT with DDP
-python -m torch.distributed.launch --nproc_per_node=2 python main.py --graph_encoder=DIGAT</code></pre>
+<pre><code># Use two GPUs to train DIGAT with DDP
+python -m torch.distributed.launch --nproc_per_node=2 main.py --graph_encoder=DIGAT</code></pre>
 
 <hr>Experiments in Section 4.4
 <pre><code>python main.py --graph_encoder=wo_SA
