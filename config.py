@@ -5,6 +5,8 @@ import torch
 import random
 import numpy as np
 from prepare_MIND_dataset import prepare_MIND_small, prepare_MIND_large
+import torch.distributed as dist
+import datetime
 
 
 class Config:
@@ -16,9 +18,10 @@ class Config:
         parser.add_argument('--graph_encoder', type=str, default='DIGAT', choices=['DIGAT', 'wo_SA', 'Seq_SA', 'wo_interaction', 'news_graph_wo_inter', 'user_graph_wo_inter'], help='Graph encoder')
         parser.add_argument('--dev_model_path', type=str, default='best_model/MIND-small/MSA-DIGAT/#1/MSA-DIGAT', help='Dev model path')
         parser.add_argument('--test_model_path', type=str, default='best_model/MIND-small/MSA-DIGAT/#1/MSA-DIGAT', help='Test model path')
-        parser.add_argument('--test_output_file', type=str, default='', help='Specific test output file')
+        parser.add_argument('--test_output_file', type=str, default='', help='Test output file')
         parser.add_argument('--device_id', type=int, default=0, help='Device ID of GPU')
         parser.add_argument('--seed', type=int, default=0, help='Seed for random number generator')
+        parser.add_argument('--local_rank', type=int, default=-1, help='Local GPU rank for distributed training (-1 for single GPU)')
         # Dataset config
         parser.add_argument('--dataset', type=str, default='MIND-small', choices=['MIND-small', 'MIND-large'], help='Directory root of dataset')
         parser.add_argument('--word_threshold', type=int, default=3, help='Word threshold')
@@ -63,10 +66,6 @@ class Config:
             self.epoch = 8
             self.dropout_rate = 0.1
             self.lr_decay_epoch = 1
-        print('*' * 32 + ' Experiment setting ' + '*' * 32)
-        for attribute in self.attribute_dict:
-            print(attribute + ' : ' + str(getattr(self, attribute)))
-        print('*' * 32 + ' Experiment setting ' + '*' * 32)
         self.news_graph_size = 1
         neighbors = 1
         for i in range(self.SAG_hops):
@@ -75,12 +74,21 @@ class Config:
             else:
                 neighbors *= self.SAG_neighbors - 1
             self.news_graph_size += neighbors
+        if self.local_rank in [-1, 0]:
+            print('*' * 32 + ' Experiment setting ' + '*' * 32)
+            for attribute in self.attribute_dict:
+                print(attribute + ' : ' + str(getattr(self, attribute)))
+            print('*' * 32 + ' Experiment setting ' + '*' * 32)
 
 
     def set_cuda(self):
         gpu_available = torch.cuda.is_available()
         assert gpu_available, 'GPU is not available'
-        torch.cuda.set_device(self.device_id)
+        if self.local_rank == -1:
+            torch.cuda.set_device(self.device_id)
+        else:
+            torch.cuda.set_device(torch.device('cuda:{}'.format(self.local_rank)))
+            dist.init_process_group(backend='nccl', timeout=datetime.timedelta(0, 43200))
         torch.manual_seed(self.seed)
         torch.cuda.manual_seed(self.seed)
         random.seed(self.seed)
@@ -90,6 +98,8 @@ class Config:
 
 
     def preliminary_setup(self):
+        if not self.local_rank in [-1, 0]:
+            return
         if self.dataset == 'MIND-small':
             if not os.path.exists('../MIND-small/train') or not os.path.exists('../MIND-small/dev') or not os.path.exists('../MIND-small/test'):
                 prepare_MIND_small()

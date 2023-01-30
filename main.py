@@ -38,7 +38,7 @@ def test(config: Config, mind_corpus: MIND_Corpus):
     test_result_path = 'test/' + config.dataset + '/res/' + config.test_model_path.replace('\\', '@').replace('/', '@')
     if not os.path.exists(test_result_path):
         os.mkdir(test_result_path)
-    print('Test model  :', config.test_model_path)
+    print('Test model :', config.test_model_path)
     auc, mrr, ndcg, ndcg10 = compute_scores(model, mind_corpus, config.batch_size * 16, config.dataset, 'test', test_result_path + '/' + model.model_name + '.txt')
     if config.dataset == 'MIND-small':
         print('AUC : %.4f\nMRR : %.4f\nnDCG@5 : %.4f\nnDCG@10 : %.4f' % (auc, mrr, ndcg, ndcg10))
@@ -56,13 +56,15 @@ if __name__ == '__main__':
     mind_corpus = MIND_Corpus(config)
     if config.mode == 'train':
         trainer = train(config, mind_corpus)
-        config.test_model_path = 'best_model/' + config.dataset + '/' + trainer.model.model_name + '/#' + str(trainer.run_index) + '/' + trainer.model.model_name
-        config.test_output_file = 'results/' + config.dataset + '/' + trainer.model.model_name + '/#' + str(trainer.run_index) + '-test'
-        test(config, mind_corpus)
+        if trainer.is_main_rank:
+            config.test_model_path = 'best_model/' + config.dataset + '/' + trainer.model.model_name + '/#' + str(trainer.run_index) + '/' + trainer.model.model_name
+            config.test_output_file = 'results/' + config.dataset + '/' + trainer.model.model_name + '/#' + str(trainer.run_index) + '-test'
+            test(config, mind_corpus)
     elif config.mode == 'dev':
+        assert config.local_rank == -1
         dev(config, mind_corpus)
     elif config.mode == 'test':
-        assert os.path.exists(config.test_model_path) and config.test_output_file != ''
+        assert config.local_rank == -1 and os.path.exists(config.test_model_path) and config.test_output_file != ''
         config.run_index = 0
         start_time = time.time()
         test(config, mind_corpus)
