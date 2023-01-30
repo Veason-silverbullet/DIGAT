@@ -6,7 +6,6 @@ import pickle
 import collections
 import re
 from torchtext.vocab import GloVe
-from config import Config
 from construct_SAG import construct_SAG
 
 
@@ -22,7 +21,7 @@ pat = re.compile(r"[\w]+|[.,!?;|]")
 
 class MIND_Corpus:
     @staticmethod
-    def preprocess(config: Config):
+    def preprocess(config):
         user_ID_file = 'user_ID-%s.json' % config.dataset
         news_ID_file = 'news_ID-%s.json' % config.dataset
         category_file = 'category-%s.json' % config.dataset
@@ -187,9 +186,7 @@ class MIND_Corpus:
                 pickle.dump(user_history_graph_data, user_history_graph_f, protocol=4)
 
 
-    def __init__(self, config: Config):
-        # preprocess data
-        MIND_Corpus.preprocess(config)
+    def __init__(self, config):
         with open('user_ID-' + str(config.dataset) + '.json', 'r', encoding='utf-8') as user_ID_f:
             self.user_ID_dict = json.load(user_ID_f)
             config.user_num = len(self.user_ID_dict)
