@@ -17,7 +17,7 @@ def compute_scores(model: nn.Module, mind_corpus: MIND_Corpus, batch_size: int, 
     cached_news_num = len(news_dataset)
     news_embedding_dim = model.news_encoder.news_embedding_dim
     max_history_num = model.graph_encoder.max_history_num
-    cached_news_representations = torch.zeros([cached_news_num, news_embedding_dim]).cuda()                                                                           # [cached_news_num, news_embedding_dim]
+    cached_news_representations = torch.zeros([cached_news_num, news_embedding_dim]).cuda() # [cached_news_num, news_embedding_dim]
     news_encoder = model.news_encoder
     graph_encoder = model.graph_encoder
     # Cache news representations

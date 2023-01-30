@@ -15,6 +15,8 @@ Our experiments require python>=3.7, torch==1.12.1, and torch_scatter==2.0.9. Th
 ## Experiment Running
 <hr>Training DIGAT
 <pre><code>python main.py --graph_encoder=DIGAT</code></pre>
+<pre><code># Use two GPUs to train DIGAT with DDP
+python -m torch.distributed.launch --nproc_per_node=2 main.py --graph_encoder=DIGAT</code></pre>
 
 <hr>Experiments in Section 4.4
 <pre><code>python main.py --graph_encoder=wo_SA
@@ -48,6 +50,7 @@ python main.py --graph_encoder=DIGAT --graph_depth=6
 python main.py --graph_encoder=DIGAT --graph_depth=7</code></pre>
 <br/>
 
+
 ## Experiments on MIND-small and MIND-large
 The experiment dataset can be specified by the config parameter `--dataset=[MIND-small,MIND-large] (default MIND-small)`.
 <pre><code>python main.py --dataset=MIND-small
@@ -62,8 +65,22 @@ In `faster-inference` mode, the inference time on MIND-small reduces from around
 
 It is also worth noting that 1) quantization is only partially performed in Eq. (8), the other parts of DIGAT are still computed in fp32. 2) Do NOT perform quantization in training DIGAT, which will degrade the performance. 3) Concretely, the computation overhead lies within the huge broadcast-add [K3 + K1 + K2](https://github.com/Veason-silverbullet/DIGAT/blob/6cfdaffae5d749bd12156084d27c08d0ba4011a6/graphEncoders.py#L150). This broadcast-add may be optimized by tailored efficient CUDA operator in the future.
 
-## TODO features (may be updated soon)
-1. Distributed training
-2. DIGAT + PLM news encoder
+## TODO features (may be updated in the future)
+1. DIGAT + PLM news encoder
+2. FP16 training
 
-P.S. As the majority of this work is done in CUHK, we do not have enough GPUs to train PLM news encoder on MIND-large (due to millions of user logs). We hope to experiment DIGAT with PLM news encoder in the future. For anyone interested in training DIGAT with PLM news encoder, please feel free to contact us via zmmao@se.cuhk.edu.hk, and we are happy to share the code.
+P.S. As the majority of this work is done in CUHK, we do not have enough GPUs to train PLM news encoder on MIND-large (due to millions of user logs). We hope to experiment DIGAT with PLM news encoder in the future. For anyone interested in training DIGAT with PLM news encoder, please feel free to contact us via zmmao@se.cuhk.edu.hk, and we are delighted to share the code.
+
+
+## Citation
+```
+@misc{DIGAT,
+    doi = {10.48550/ARXIV.2210.05196},
+    url = {https://arxiv.org/abs/2210.05196},
+    author = {Mao, Zhiming and Li, Jian and Wang, Hongru and Zeng, Xingshan and Wong, Kam-Fai},
+    title = {DIGAT: Modeling News Recommendation with Dual-Graph Interaction},
+    publisher = {arXiv},
+    year = {2022}
+}
+```
+The paper was first submitted to ARR 2021 November [[link](https://openreview.net/forum?id=t2vXlG7Oe5m)].
