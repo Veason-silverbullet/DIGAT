@@ -5,6 +5,7 @@ import torch
 import random
 import numpy as np
 from prepare_MIND_dataset import prepare_MIND_small, prepare_MIND_large
+from MIND_corpus import MIND_Corpus
 import torch.distributed as dist
 import datetime
 
@@ -137,6 +138,7 @@ class Config:
                             truth_f.write(('' if test_ID == 0 else '\n') + str(test_ID + 1) + ' ' + str(labels).replace(' ', ''))
         elif self.dataset == 'MIND-large':
             mkdirs('prediction/MIND-large/' + model_name)
+        MIND_Corpus.preprocess(self)
 
 
     def __init__(self):
