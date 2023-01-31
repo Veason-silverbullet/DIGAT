@@ -9,7 +9,7 @@ The experiments are conducted on MIND-small and MIND-large. Our code tries to do
 ## Environment Requirements
 Dependencies are needed to be installed by
 <pre><code>bash install_dependencies.sh</code></pre>
-Our experiments require python>=3.7, torch==1.12.1, and torch_scatter==2.0.9. The [torch_scatter](https://github.com/rusty1s/pytorch_scatter) package is necessary. If the dependency installation fails, please follow [https://github.com/rusty1s/pytorch_scatter](https://github.com/rusty1s/pytorch_scatter) to install the package manually.
+Our experiments require python>=3.7, torch==1.12.0, and torch_scatter==2.0.9. The [torch_scatter](https://github.com/rusty1s/pytorch_scatter) package is necessary. If the dependency installation fails, please follow [https://github.com/rusty1s/pytorch_scatter](https://github.com/rusty1s/pytorch_scatter) to install the package manually.
 <br/><br/>
 
 ## Experiment Running

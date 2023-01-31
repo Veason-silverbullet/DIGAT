@@ -143,8 +143,8 @@ class Config:
 
     def __init__(self):
         self.parse_argument()
-        self.preliminary_setup()
         self.set_cuda()
+        self.preliminary_setup()
 
 
 if __name__ == '__main__':
