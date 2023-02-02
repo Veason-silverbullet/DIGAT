@@ -25,8 +25,8 @@ def dev(config: Config, mind_corpus: MIND_Corpus):
     dev_result_path = 'dev/' + config.dataset + '/res/' + config.dev_model_path.replace('\\', '@').replace('/', '@')
     if not os.path.exists(dev_result_path):
         os.mkdir(dev_result_path)
-    auc, mrr, ndcg, ndcg10 = compute_scores(model, mind_corpus, config.batch_size * 16, config.dataset, 'dev', dev_result_path + '/' + model.model_name + '.txt')
     print('Dev : ' + config.dev_model_path)
+    auc, mrr, ndcg, ndcg10 = compute_scores(model, mind_corpus, config.batch_size * 16, config.dataset, 'dev', dev_result_path + '/' + model.model_name + '.txt')
     print('AUC : %.4f\nMRR : %.4f\nnDCG@5 : %.4f\nnDCG@10 : %.4f' % (auc, mrr, ndcg, ndcg10))
     return auc, mrr, ndcg, ndcg10
 
@@ -57,6 +57,9 @@ if __name__ == '__main__':
     if config.mode == 'train':
         trainer = train(config, mind_corpus)
         if trainer.is_main_rank:
+            # debug
+            if config.dataset == 'MIND-large':
+                exit()
             config.test_model_path = 'best_model/' + config.dataset + '/' + trainer.model.model_name + '/#' + str(trainer.run_index) + '/' + trainer.model.model_name
             config.test_output_file = 'results/' + config.dataset + '/' + trainer.model.model_name + '/#' + str(trainer.run_index) + '-test'
             test(config, mind_corpus)
