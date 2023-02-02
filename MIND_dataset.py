@@ -23,9 +23,10 @@ class MIND_Train_Dataset(data.Dataset):
         self.train_samples = [[0 for _ in range(1 + self.negative_sample_num)] for __ in range(len(self.train_behaviors))]
         self.num = len(self.train_behaviors)
 
-    def negative_sampling(self):
-        print('\nBegin negative sampling, training sample num : %d' % self.num)
-        start_time = time.time()
+    def negative_sampling(self, verbose=True):
+        if verbose:
+            print('\nBegin negative sampling, training sample num : %d' % self.num)
+            start_time = time.time()
         for i, train_behavior in enumerate(self.train_behaviors):
             self.train_samples[i][0] = train_behavior[1]
             negative_samples = train_behavior[2]
@@ -42,8 +43,9 @@ class MIND_Train_Dataset(data.Dataset):
                             self.train_samples[i][j + 1] = negative_samples[k]
                             used_negative_samples.add(k)
                             break
-        end_time = time.time()
-        print('End negative sampling, used time : %.3fs' % (end_time - start_time))
+        if verbose:
+            end_time = time.time()
+            print('End negative sampling, used time : %.3fs' % (end_time - start_time))
 
     # user_title_text       : [max_history_num, max_title_length]
     # user_title_mask       : [max_history_num, max_title_length]

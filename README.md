@@ -74,13 +74,20 @@ P.S. As the majority of this work is done in CUHK, we do not have enough GPUs to
 
 ## Citation
 ```
-@misc{DIGAT,
-    doi = {10.48550/ARXIV.2210.05196},
-    url = {https://arxiv.org/abs/2210.05196},
-    author = {Mao, Zhiming and Li, Jian and Wang, Hongru and Zeng, Xingshan and Wong, Kam-Fai},
-    title = {DIGAT: Modeling News Recommendation with Dual-Graph Interaction},
-    publisher = {arXiv},
-    year = {2022}
+@inproceedings{mao-etal-2022-digat,
+    title = "{DIGAT}: Modeling News Recommendation with Dual-Graph Interaction",
+    author = "Mao, Zhiming  and
+              Li, Jian  and
+              Wang, Hongru  and
+              Zeng, Xingshan  and
+              Wong, Kam-Fai",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2022",
+    month = dec,
+    year = "2022",
+    address = "Abu Dhabi, United Arab Emirates",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.findings-emnlp.491",
+    pages = "6595--6607"
 }
 ```
 The paper was first submitted to ARR 2021 November [[link](https://openreview.net/forum?id=t2vXlG7Oe5m)].

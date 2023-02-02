@@ -33,6 +33,7 @@ class Config:
         parser.add_argument('--epoch', type=int, default=18, help='Training epoch')
         parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
         parser.add_argument('--lr', type=float, default=1e-4, help='Learning rate')
+        parser.add_argument('--weight_decay', type=float, default=0, help='Weight decay')
         parser.add_argument('--gradient_clip_norm', type=float, default=1, help='Gradient clip norm (non-positive value for no gradient clipping)')
         parser.add_argument('--lr_decay_epoch', type=int, default=0, help='Epoch for lr decay (non-positive value for no lr decay)')
         # Dev config
@@ -83,8 +84,7 @@ class Config:
 
 
     def set_cuda(self):
-        gpu_available = torch.cuda.is_available()
-        assert gpu_available, 'GPU is not available'
+        assert torch.cuda.is_available(), 'GPU is not available'
         if self.local_rank == -1:
             torch.cuda.set_device(self.device_id)
         else:

@@ -22,7 +22,12 @@ class Trainer:
         self.max_history_num = config.max_history_num
         self.negative_sample_num = config.negative_sample_num
         self.lr = config.lr
-        self.optimizer = optim.Adam(filter(lambda p: p.requires_grad, self.model.parameters()), lr=config.lr)
+        no_decay = ['.bias']
+        optimizer_grouped_parameters = [
+            {'params': [p for n, p in self.model.named_parameters() if not any(nd in n.lower() for nd in no_decay) and p.requires_grad], 'weight_decay': config.weight_decay},
+            {'params': [p for n, p in self.model.named_parameters() if any(nd in n.lower() for nd in no_decay) and p.requires_grad], 'weight_decay': 0.0}
+        ]
+        self.optimizer = optim.Adam(optimizer_grouped_parameters, lr=config.lr)
         self.gradient_clip_norm = config.gradient_clip_norm
         self.lr_decay_epoch = config.lr_decay_epoch
         self.mind_corpus = mind_corpus
@@ -61,12 +66,12 @@ class Trainer:
 
     def lr_decay(self):
         for group in self.optimizer.param_groups:
-            group['lr'] = group['lr'] / 5
+            group['lr'] = group['lr'] / 10
 
     def train(self):
         model = self.model
         for e in (tqdm(range(1, self.epoch + 1)) if self.is_main_rank else range(1, self.epoch + 1)):
-            self.train_dataset.negative_sampling()
+            self.train_dataset.negative_sampling(verbose=self.is_main_rank)
             if self.local_rank == -1:
                 train_dataloader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.batch_size // 16, pin_memory=True)
             else:
