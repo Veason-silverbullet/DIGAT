@@ -57,9 +57,6 @@ if __name__ == '__main__':
     if config.mode == 'train':
         trainer = train(config, mind_corpus)
         if trainer.is_main_rank:
-            # debug
-            if config.dataset == 'MIND-large':
-                exit()
             config.test_model_path = 'best_model/' + config.dataset + '/' + trainer.model.model_name + '/#' + str(trainer.run_index) + '/' + trainer.model.model_name
             config.test_output_file = 'results/' + config.dataset + '/' + trainer.model.model_name + '/#' + str(trainer.run_index) + '-test'
             test(config, mind_corpus)

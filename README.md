@@ -1,5 +1,5 @@
 # DIGAT
-This repository releases the code of paper [**DIGAT: Modeling News Recommendation with Dual-Graph Interaction** (EMNLP-2022 Findings)](https://arxiv.org/pdf/2210.05196.pdf).
+This repository releases the code of paper [**DIGAT: Modeling News Recommendation with Dual-Graph Interaction** (EMNLP-2022 Findings)](https://aclanthology.org/2022.findings-emnlp.491.pdf).
 <br/><br/>
 
 ## Dataset Preparation
