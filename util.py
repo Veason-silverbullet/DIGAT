@@ -119,4 +119,4 @@ class AvgMetric:
         return self.avg <= value.avg
 
     def __str__(self):
-        return '%.4f\nAUC = %.4f\nMRR = %.4f\nnDCG@5 = %.4f\nnDCG@10 = %.4f' % (self.avg, self.auc, self.mrr, self.ndcg5, self.ndcg10)
+        return '%.4f\nAUC = %.4f\nMRR = %.4f\nnDCG@5  = %.4f\nnDCG@10 = %.4f' % (self.avg, self.auc, self.mrr, self.ndcg5, self.ndcg10)

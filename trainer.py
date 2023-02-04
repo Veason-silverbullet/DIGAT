@@ -22,7 +22,7 @@ class Trainer:
         self.max_history_num = config.max_history_num
         self.negative_sample_num = config.negative_sample_num
         self.lr = config.lr
-        no_decay = ['.bias']
+        no_decay = ['.bias', 'graph_encoder.']
         optimizer_grouped_parameters = [
             {'params': [p for n, p in self.model.named_parameters() if not any(nd in n.lower() for nd in no_decay) and p.requires_grad], 'weight_decay': config.weight_decay},
             {'params': [p for n, p in self.model.named_parameters() if any(nd in n.lower() for nd in no_decay) and p.requires_grad], 'weight_decay': 0.0}
@@ -117,7 +117,7 @@ class Trainer:
                 self.ndcg5.append(ndcg5)
                 self.ndcg10.append(ndcg10)
                 print('Epoch %d : dev done\nDev criterions' % e)
-                print('AUC = {:.4f}\nMRR = {:.4f}\nnDCG@5 = {:.4f}\nnDCG@10 = {:.4f}'.format(auc, mrr, ndcg5, ndcg10))
+                print('AUC = {:.4f}\nMRR = {:.4f}\nnDCG@5  = {:.4f}\nnDCG@10 = {:.4f}'.format(auc, mrr, ndcg5, ndcg10))
                 if self.dev_criterion == 'auc':
                     if auc >= self.best_dev_auc:
                         self.best_dev_auc = auc
@@ -183,6 +183,6 @@ class Trainer:
             print('Training : ' + self.model.model_name + ' #' + str(self.run_index) + ' completed\nDev criterions:')
             print('AUC : %.4f' % self.auc[self.best_dev_epoch - 1])
             print('MRR : %.4f' % self.mrr[self.best_dev_epoch - 1])
-            print('nDCG@5 : %.4f' % self.ndcg5[self.best_dev_epoch - 1])
+            print('nDCG@5  : %.4f' % self.ndcg5[self.best_dev_epoch - 1])
             print('nDCG@10 : %.4f' % self.ndcg10[self.best_dev_epoch - 1])
             shutil.copy('models/' + self.dataset_type + '/' + self.model.model_name + '/#' + str(self.run_index) + '/' + self.model.model_name + '-' + str(self.best_dev_epoch), 'best_model/' + self.dataset_type + '/' + self.model.model_name + '/#' + str(self.run_index) + '/' + self.model.model_name)
