@@ -53,8 +53,7 @@ def compute_scores(model: nn.Module, mind_corpus: MIND_Corpus, batch_size: int, 
         indices = (mind_corpus.dev_indices if mode == 'dev' else mind_corpus.test_indices)
         scores = torch.zeros([len(indices)]).cuda()
         index = 0
-        for (user_title_index, user_graph, user_graph_mask, user_category_mask, user_category_indices, \
-             news_ID, news_graph, news_graph_mask) in dataloader:
+        for (user_title_index, user_graph, user_graph_mask, user_category_mask, user_category_indices, news_ID, news_graph, news_graph_mask) in dataloader:
             user_title_index = user_title_index.cuda(non_blocking=True)
             user_graph = user_graph.cuda(non_blocking=True)
             user_category_mask = user_category_mask.cuda(non_blocking=True)
@@ -119,4 +118,4 @@ class AvgMetric:
         return self.avg <= value.avg
 
     def __str__(self):
-        return '%.4f\nAUC = %.4f\nMRR = %.4f\nnDCG@5 = %.4f\nnDCG@10 = %.4f' % (self.avg, self.auc, self.mrr, self.ndcg5, self.ndcg10)
+        return '%.4f\nAUC = %.4f\nMRR = %.4f\nnDCG@5  = %.4f\nnDCG@10 = %.4f' % (self.avg, self.auc, self.mrr, self.ndcg5, self.ndcg10)

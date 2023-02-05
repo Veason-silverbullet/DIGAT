@@ -38,7 +38,7 @@ class Config:
         parser.add_argument('--lr_decay_epoch', type=int, default=0, help='Epoch for lr decay (non-positive value for no lr decay)')
         # Dev config
         parser.add_argument('--dev_criterion', type=str, default='avg', choices=['auc', 'mrr', 'ndcg5', 'ndcg10', 'avg'], help='Dev criterion to select model')
-        parser.add_argument('--early_stopping_epoch', type=int, default=4, help='Epoch of stop training after the dev result does not improve')
+        parser.add_argument('--early_stopping_epoch', type=int, default=5, help='Epoch of stop training after the dev result does not improve')
         # Model config
         parser.add_argument('--word_embedding_dim', type=int, default=300, choices=[50, 100, 200, 300], help='Word embedding dimension')
         parser.add_argument('--cnn_method', type=str, default='naive', choices=['naive', 'group3', 'group4', 'group5'], help='CNN group')
@@ -65,7 +65,7 @@ class Config:
             self.train_root = '../MIND-large/train'
             self.dev_root = '../MIND-large/dev'
             self.test_root = '../MIND-large/test'
-            self.epoch = 8
+            self.epoch = 7
             self.dropout_rate = 0.1
             self.lr_decay_epoch = 1
         self.news_graph_size = 1
