@@ -22,7 +22,7 @@ class Trainer:
         self.max_history_num = config.max_history_num
         self.negative_sample_num = config.negative_sample_num
         self.lr = config.lr
-        no_decay = ['.bias', 'graph_encoder.']
+        no_decay = ['.bias', 'embed', 'graph_encoder.']
         optimizer_grouped_parameters = [
             {'params': [p for n, p in self.model.named_parameters() if not any(nd in n.lower() for nd in no_decay) and p.requires_grad], 'weight_decay': config.weight_decay},
             {'params': [p for n, p in self.model.named_parameters() if any(nd in n.lower() for nd in no_decay) and p.requires_grad], 'weight_decay': 0.0}
