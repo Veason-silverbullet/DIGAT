@@ -30,12 +30,11 @@ class Config:
         # Training config
         parser.add_argument('--negative_sample_num', type=int, default=4, help='Negative sample number of each positive sample')
         parser.add_argument('--max_history_num', type=int, default=50, help='Maximum number of history news for each user')
-        parser.add_argument('--epoch', type=int, default=18, help='Training epoch')
+        parser.add_argument('--epoch', type=int, default=16, help='Training epoch')
         parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
         parser.add_argument('--lr', type=float, default=1e-4, help='Learning rate')
         parser.add_argument('--weight_decay', type=float, default=0, help='Weight decay')
         parser.add_argument('--gradient_clip_norm', type=float, default=1, help='Gradient clip norm (non-positive value for no gradient clipping)')
-        parser.add_argument('--lr_decay_epoch', type=int, default=0, help='Epoch for lr decay (non-positive value for no lr decay)')
         # Dev config
         parser.add_argument('--dev_criterion', type=str, default='avg', choices=['auc', 'mrr', 'ndcg5', 'ndcg10', 'avg'], help='Dev criterion to select model')
         parser.add_argument('--early_stopping_epoch', type=int, default=5, help='Epoch of stop training after the dev result does not improve')
@@ -57,17 +56,15 @@ class Config:
         for attribute in self.attribute_dict:
             setattr(self, attribute, self.attribute_dict[attribute])
         self.seed = self.seed if self.seed >= 0 else (int)(time.time())
+        self.train_root = '../%s/train' % self.dataset
+        self.dev_root = '../%s/dev' % self.dataset
+        self.test_root = '../%s/test' % self.dataset
         if self.dataset == 'MIND-small':
-            self.train_root = '../MIND-small/train'
-            self.dev_root = '../MIND-small/dev'
-            self.test_root = '../MIND-small/test'
+            self.dropout_rate = 0.2
+            self.epoch = 16
         if self.dataset == 'MIND-large':
-            self.train_root = '../MIND-large/train'
-            self.dev_root = '../MIND-large/dev'
-            self.test_root = '../MIND-large/test'
-            self.epoch = 7
             self.dropout_rate = 0.1
-            self.lr_decay_epoch = 1
+            self.epoch = 7
         self.news_graph_size = 1
         neighbors = 1
         for i in range(self.SAG_hops):

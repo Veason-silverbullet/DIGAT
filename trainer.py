@@ -29,7 +29,7 @@ class Trainer:
         ]
         self.optimizer = optim.Adam(optimizer_grouped_parameters, lr=config.lr)
         self.gradient_clip_norm = config.gradient_clip_norm
-        self.lr_decay_epoch = config.lr_decay_epoch
+        self.lr_decay_epoch = (self.epoch - 1) // 10 + 1 # 10% learning rate decay
         self.mind_corpus = mind_corpus
         self.train_dataset = MIND_Train_Dataset(mind_corpus)
         self.local_rank = config.local_rank
