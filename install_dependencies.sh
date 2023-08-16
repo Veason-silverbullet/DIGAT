@@ -1,8 +1,8 @@
 # the versions of torch and torchtext must be matched (https://pypi.org/project/torchtext)
 # the CUDA version must be matched with torch-scatter (https://github.com/rusty1s/pytorch_scatter)
-TORCH_VERSION=1.12.0
-TORCHTEXT_VERSION=0.13.0
-CUDA_VERSION=cu113
+TORCH_VERSION=1.13.0
+TORCHTEXT_VERSION=0.14.0
+CUDA_VERSION=cu116
 
 
 pip install --upgrade pip # upgrading pip is necessary to install sentencepiece
@@ -13,4 +13,4 @@ pip install torchtext==${TORCHTEXT_VERSION} --extra-index-url https://download.p
 pip install nltk
 pip install numpy
 pip install sklearn
-pip install torch-scatter -f https://data.pyg.org/whl/torch-${TORCH_VERSION}+${CUDA_VERSION}.html
+pip install torch-scatter==2.1.1 -f https://data.pyg.org/whl/torch-${TORCH_VERSION}+${CUDA_VERSION}.html
